@@ -1,0 +1,490 @@
+<!doctype html>
+<!--
+  Interactivo · Volumen de la esfera
+  Spanish ASE Math · Nivel 4 · Tema 2 · Lección 2.1
+  José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago
+  Licencia: Creative Commons Atribución-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)
+  https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+-->
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactivo · Volumen de la esfera</title>
+    <meta name="author" content="José M. Fernández" />
+    <meta name="description" content="Interactivo para explorar cómo cambia el volumen de una esfera al modificar su radio. Spanish ASE Math, Nivel 4, Lección 2.1." />
+    <meta name="license" content="CC BY-NC-SA 4.0" />
+    <link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" />
+    <style>
+      :root {
+        --tema: #004d40;
+        --tema-d: #00332b;
+        --tema-bg: #e0f2f1;
+        --tema-bg2: #b2dfdb;
+        --acento: #bf360c;
+        --txt: #222;
+        --bg: #f5f7fa;
+        --muted: #555;
+      }
+      * { box-sizing: border-box; }
+      body {
+        font-family: 'Segoe UI', system-ui, sans-serif;
+        margin: 0; background: var(--bg); color: var(--txt);
+        line-height: 1.6; font-size: 16px;
+      }
+      .contenedor { max-width: 940px; margin: 0 auto; padding: 24px; }
+      .sr-only {
+        position: absolute; width: 1px; height: 1px; padding: 0;
+        margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0);
+        white-space: nowrap; border: 0;
+      }
+      :focus-visible { outline: 3px solid var(--acento); outline-offset: 2px; }
+
+      header.principal {
+        background: linear-gradient(135deg, #00332b 0%, #004d40 55%, #00695c 100%);
+        color: #fff; padding: 30px 28px; border-radius: 14px;
+        margin-bottom: 20px; box-shadow: 0 4px 14px rgba(0, 51, 43, 0.28);
+      }
+      header.principal .ruta { font-size: 13px; letter-spacing: 0.4px; text-transform: uppercase; }
+      header.principal h1 { margin: 8px 0 6px; font-size: 25px; font-weight: 700; }
+      header.principal .meta { font-size: 14px; }
+
+      h2.seccion {
+        color: var(--tema-d); font-size: 20px; margin: 30px 0 12px;
+        padding-bottom: 6px; border-bottom: 3px solid var(--tema-bg);
+      }
+      h3 { color: var(--tema-d); font-size: 17px; margin: 18px 0 8px; }
+
+      .caja-objetivos {
+        background: var(--tema-bg); border-left: 6px solid var(--tema);
+        padding: 16px 22px; border-radius: 0 10px 10px 0; margin-bottom: 20px;
+      }
+      .caja-objetivos h2 { margin: 0 0 8px; color: var(--tema-d); font-size: 18px; }
+      .caja-objetivos ul { margin: 0; padding-left: 22px; }
+      .caja-objetivos li { margin: 4px 0; }
+
+      .bloque {
+        background: #fff; border-radius: 10px; padding: 18px 22px;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.06); margin-bottom: 18px;
+      }
+
+      .taller { display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start; }
+      .taller .figura { flex: 1 1 320px; min-width: 300px; text-align: center; }
+      .taller .mando { flex: 1 1 330px; min-width: 300px; }
+      .figura svg { max-width: 100%; height: auto; }
+
+      .control { margin-bottom: 14px; }
+      .control .nombre {
+        display: block; font-weight: 700; color: var(--tema-d);
+        font-size: 15px; margin-bottom: 4px; cursor: pointer;
+      }
+      .control .fila { display: flex; align-items: center; gap: 10px; }
+      input[type="range"] { flex: 1; accent-color: var(--tema); height: 26px; min-width: 120px; }
+      input[type="number"] {
+        width: 84px; padding: 6px 8px; font-size: 15px; font-family: inherit;
+        border: 2px solid var(--tema); border-radius: 7px; color: var(--txt);
+      }
+      .unidad-inline { font-weight: 700; color: var(--muted); font-size: 14px; }
+
+      .grupo-btn { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 16px; }
+      .btn {
+        background: var(--tema); color: #fff; border: 2px solid var(--tema);
+        padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 700;
+        cursor: pointer; font-family: inherit;
+      }
+      .btn:hover { background: var(--tema-d); border-color: var(--tema-d); }
+      .btn.sec { background: #fff; color: var(--tema-d); }
+      .btn.sec:hover { background: var(--tema-bg); }
+      .btn[aria-pressed="true"] { background: var(--acento); border-color: var(--acento); color: #fff; }
+
+      .resultado {
+        background: var(--tema-bg); border: 2px solid var(--tema);
+        border-radius: 10px; padding: 14px 18px; margin-top: 10px;
+      }
+      .resultado .paso { margin: 6px 0; font-size: 15px; }
+      .resultado .paso .et { font-weight: 700; color: var(--tema-d); }
+      .resultado .valor {
+        font-size: 24px; font-weight: 700; color: var(--tema-d);
+        margin: 8px 0 2px; text-align: center;
+      }
+      .resultado .aprox { text-align: center; font-size: 15px; color: #333; }
+      .resultado .extra { text-align: center; font-size: 14px; color: var(--muted); margin-top: 4px; }
+
+      .caja-tip {
+        background: #e8f5e9; border-left: 5px solid #2e7d32;
+        padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 14px 0;
+        color: #1b5e20; font-size: 15px;
+      }
+      .caja-atencion {
+        background: #fff8e1; border-left: 5px solid #f9a825;
+        padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 14px 0;
+        font-size: 15px; color: #5c3900;
+      }
+      .caja-atencion strong { color: #5c3900; }
+
+      .tabla { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px; }
+      .tabla th, .tabla td { border: 1px solid #e0e0e0; padding: 8px 12px; text-align: left; }
+      .tabla th { background: var(--tema); color: #fff; }
+      .tabla td:first-child { background: var(--tema-bg); font-weight: 600; color: var(--tema-d); }
+      .tabla tr.activa td { background: #fff3e0; font-weight: 700; color: var(--acento); }
+      .tabla tr.activa td:first-child { background: #ffe0b2; color: var(--acento); }
+
+      .graficas { display: flex; flex-wrap: wrap; gap: 16px; }
+      .grafica { flex: 1 1 300px; min-width: 280px; text-align: center; }
+      .grafica h3 { margin-top: 0; }
+      .grafica p { font-size: 14px; color: var(--muted); margin: 4px 0 0; }
+
+      .reto { background: #ede7f6; border-left: 6px solid #5e35b1; padding: 16px 20px; border-radius: 0 10px 10px 0; margin: 18px 0; }
+      .reto h2 { margin-top: 0; color: #4527a0; font-size: 19px; }
+      .reto .meta-reto { font-size: 19px; font-weight: 700; color: #4527a0; margin: 8px 0; }
+      .fb { margin-top: 10px; font-weight: 700; font-size: 15px; min-height: 24px; }
+      .fb.ok { color: #1b5e20; }
+      .fb.no { color: #4527a0; }
+
+      footer {
+        text-align: center; padding: 20px; color: var(--muted); font-size: 13px;
+        border-top: 1px solid #ddd; margin-top: 24px;
+      }
+      footer a { color: var(--tema-d); }
+    </style>
+  </head>
+  <body>
+    <div class="contenedor">
+      <header class="principal">
+        <div class="ruta">Spanish ASE Math · Nivel 4 · Tema 2 · Lección 2.1</div>
+        <h1>Interactivo · Volumen de la esfera</h1>
+        <div class="meta">V = 4/3 πr³ · Mueve el radio y observa cómo cambia el volumen</div>
+      </header>
+
+      <div class="caja-objetivos">
+        <h2>Qué se puede explorar aquí</h2>
+        <ul>
+          <li>Cómo cambia el volumen de una esfera al modificar únicamente su <strong>radio</strong>.</li>
+          <li>Por qué al duplicar el radio el volumen no se duplica, sino que se multiplica por <strong>ocho</strong>.</li>
+          <li>La relación entre la esfera y el cilindro que la contiene.</li>
+        </ul>
+      </div>
+
+      <h2 class="seccion">1. Taller de la esfera</h2>
+      <div class="bloque">
+        <div class="taller">
+          <div class="figura">
+            <div id="dibujo"></div>
+            <div class="grupo-btn" style="justify-content: center">
+              <button type="button" class="btn sec" id="btn-cilindro" aria-pressed="false">Mostrar el cilindro que la contiene</button>
+            </div>
+          </div>
+
+          <div class="mando">
+            <div class="control">
+              <span class="nombre" id="lbl-r">Radio (r)</span>
+              <div class="fila">
+                <input type="range" id="rango-r" min="0.5" max="12" step="0.5" value="3" aria-labelledby="lbl-r" />
+                <input type="number" id="num-r" min="0.5" max="12" step="0.5" value="3" aria-labelledby="lbl-r" />
+                <span class="unidad-inline" id="uni-r">cm</span>
+              </div>
+            </div>
+
+            <div class="control">
+              <span class="nombre" id="lbl-u">Unidad de medida</span>
+              <div class="grupo-btn" role="group" aria-labelledby="lbl-u">
+                <button type="button" class="btn sec u-btn" data-u="cm" aria-pressed="true">cm</button>
+                <button type="button" class="btn sec u-btn" data-u="m" aria-pressed="false">m</button>
+                <button type="button" class="btn sec u-btn" data-u="pulg" aria-pressed="false">pulg</button>
+              </div>
+            </div>
+
+            <div class="resultado" aria-live="polite">
+              <div class="paso"><span class="et">Fórmula:</span> V = 4/3 πr³</div>
+              <div class="paso"><span class="et">Sustitución:</span> <span id="p-sust"></span></div>
+              <div class="paso"><span class="et">Se eleva al cubo:</span> <span id="p-cubo"></span></div>
+              <div class="valor" id="p-valor"></div>
+              <div class="aprox" id="p-aprox"></div>
+              <div class="extra" id="p-extra"></div>
+            </div>
+
+            <div class="grupo-btn" style="margin-top: 12px">
+              <button type="button" class="btn" id="btn-doble">Duplicar el radio</button>
+              <button type="button" class="btn sec" id="btn-mitad">Reducir el radio a la mitad</button>
+              <button type="button" class="btn sec" id="btn-reset">Restablecer</button>
+            </div>
+            <div class="fb" id="fb-cambio"></div>
+          </div>
+        </div>
+
+        <div class="caja-atencion">
+          <strong>El radio, no el diámetro:</strong> si el problema da el diámetro, primero se divide entre 2. Aquí el control mueve siempre el radio; el diámetro aparece en la figura solo como referencia.
+        </div>
+      </div>
+
+      <h2 class="seccion">2. Cómo crece el volumen</h2>
+      <div class="bloque">
+        <div class="graficas">
+          <div class="grafica">
+            <h3>Volumen frente al radio</h3>
+            <div id="graf-r"></div>
+            <p>La curva sube cada vez más rápido: el radio está elevado al cubo.</p>
+          </div>
+          <div class="grafica">
+            <h3>Efecto de multiplicar el radio</h3>
+            <table class="tabla" id="tabla-efecto">
+              <caption class="sr-only">Volumen de la esfera para el radio actual y para sus múltiplos.</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Radio</th>
+                  <th scope="col">Volumen aproximado</th>
+                  <th scope="col">Comparado con el actual</th>
+                </tr>
+              </thead>
+              <tbody id="cuerpo-efecto"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="caja-tip">
+          <strong>La regla del cubo:</strong> si el radio se multiplica por 2, el volumen se multiplica por 2³ = 8. Si se multiplica por 3, el volumen se multiplica por 3³ = 27. Es la consecuencia directa del exponente 3 de la fórmula.
+        </div>
+      </div>
+
+      <h2 class="seccion">3. Reto</h2>
+      <div class="reto">
+        <h2>Ajusta el radio hasta alcanzar el volumen pedido</h2>
+        <p>Mueve el control del radio hasta que el volumen se acerque al valor propuesto (se acepta un margen del 2 %).</p>
+        <div class="meta-reto" id="meta-reto"></div>
+        <div class="grupo-btn">
+          <button type="button" class="btn" id="btn-reto">Nuevo reto</button>
+        </div>
+        <div class="fb" id="fb-reto" aria-live="polite"></div>
+      </div>
+
+      <footer>
+        Spanish ASE Math · Nivel 4 · Lección 2.1 · Interactivo de volumen de la esfera<br />
+        José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago<br />
+        <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" target="_blank" rel="noopener noreferrer">Licencia CC BY-NC-SA 4.0</a>
+      </footer>
+    </div>
+
+    <script>
+      (function () {
+        var unidad = 'cm';
+        var rActual = 3;
+        var mostrarCil = false;
+        var metaVolumen = null;
+
+        var rangoR = document.getElementById('rango-r');
+        var numR = document.getElementById('num-r');
+        var uniR = document.getElementById('uni-r');
+        var dibujo = document.getElementById('dibujo');
+        var grafR = document.getElementById('graf-r');
+        var cuerpoEfecto = document.getElementById('cuerpo-efecto');
+        var fbCambio = document.getElementById('fb-cambio');
+        var fbReto = document.getElementById('fb-reto');
+        var metaReto = document.getElementById('meta-reto');
+
+        /* ---------- utilidades numéricas ---------- */
+        function mcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { var t = b; b = a % b; a = t; } return a; }
+        function fracTexto(n, d) {
+          var g = mcd(n, d) || 1; n = n / g; d = d / g;
+          return d === 1 ? String(n) : n + '/' + d;
+        }
+        function fmt(x) {
+          var dec = Math.abs(x) >= 1000 ? 0 : 2;
+          return x.toFixed(dec).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+        function volumen(r) { return (4 / 3) * Math.PI * r * r * r; }
+
+        /* ---------- figura ---------- */
+        function dibujar() {
+          var W = 340, H = 300, cx = 170, cy = 150;
+          var px = 10; /* píxeles por unidad */
+          var rp = rActual * px;
+          var s = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Esfera de radio ' + rActual + ' ' + unidad + ' dibujada a escala.">';
+          s += '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#ffffff"/>';
+          if (mostrarCil) {
+            s += '<rect x="' + (cx - rp) + '" y="' + (cy - rp) + '" width="' + (2 * rp) + '" height="' + (2 * rp) + '" fill="none" stroke="#5e35b1" stroke-width="2" stroke-dasharray="6 4"/>';
+            s += '<ellipse cx="' + cx + '" cy="' + (cy - rp) + '" rx="' + rp + '" ry="' + (rp * 0.28) + '" fill="none" stroke="#5e35b1" stroke-width="2" stroke-dasharray="6 4"/>';
+            s += '<ellipse cx="' + cx + '" cy="' + (cy + rp) + '" rx="' + rp + '" ry="' + (rp * 0.28) + '" fill="none" stroke="#5e35b1" stroke-width="2" stroke-dasharray="6 4"/>';
+          }
+          s += '<circle cx="' + cx + '" cy="' + cy + '" r="' + rp + '" fill="#b2dfdb" fill-opacity="0.85" stroke="#004d40" stroke-width="2.5"/>';
+          s += '<ellipse cx="' + cx + '" cy="' + cy + '" rx="' + rp + '" ry="' + (rp * 0.3) + '" fill="none" stroke="#00695c" stroke-width="1.5" stroke-dasharray="4 3"/>';
+          s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + rp) + '" y2="' + cy + '" stroke="#bf360c" stroke-width="3"/>';
+          s += '<circle cx="' + cx + '" cy="' + cy + '" r="3" fill="#bf360c"/>';
+          s += '<text x="' + (cx + rp / 2) + '" y="' + (cy - 8) + '" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="14" font-weight="700" fill="#bf360c">r = ' + rActual + '</text>';
+          s += '<text x="' + cx + '" y="' + (H - 12) + '" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="14" fill="#555">diámetro = ' + (rActual * 2) + ' ' + unidad + '</text>';
+          s += '</svg>';
+          dibujo.innerHTML = s;
+        }
+
+        /* ---------- gráfica ---------- */
+        function dibujarGrafica(contenedor, f, xmin, xmax, xAct, etX, etY) {
+          var W = 320, H = 200, ml = 52, mr = 14, mt = 14, mb = 38;
+          var pw = W - ml - mr, ph = H - mt - mb;
+          var n = 70, i, x, y, maxY = 0, pts = [];
+          for (i = 0; i <= n; i++) { x = xmin + (xmax - xmin) * i / n; y = f(x); pts.push([x, y]); if (y > maxY) maxY = y; }
+          if (maxY <= 0) maxY = 1;
+          function px(x) { return ml + (x - xmin) / (xmax - xmin) * pw; }
+          function py(y) { return mt + ph - (y / maxY) * ph; }
+          var d = '';
+          for (i = 0; i < pts.length; i++) { d += (i === 0 ? 'M' : 'L') + px(pts[i][0]).toFixed(1) + ' ' + py(pts[i][1]).toFixed(1); }
+          var yAct = f(xAct);
+          var s = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gráfica del volumen frente a ' + etX + '. En el valor actual ' + xAct + ', el volumen es aproximadamente ' + fmt(yAct) + '.">';
+          s += '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#ffffff"/>';
+          s += '<line x1="' + ml + '" y1="' + (mt + ph) + '" x2="' + (ml + pw) + '" y2="' + (mt + ph) + '" stroke="#555" stroke-width="1.5"/>';
+          s += '<line x1="' + ml + '" y1="' + mt + '" x2="' + ml + '" y2="' + (mt + ph) + '" stroke="#555" stroke-width="1.5"/>';
+          s += '<path d="' + d + '" fill="none" stroke="#004d40" stroke-width="3"/>';
+          s += '<line x1="' + px(xAct) + '" y1="' + py(yAct) + '" x2="' + px(xAct) + '" y2="' + (mt + ph) + '" stroke="#bf360c" stroke-width="1.5" stroke-dasharray="4 3"/>';
+          s += '<line x1="' + ml + '" y1="' + py(yAct) + '" x2="' + px(xAct) + '" y2="' + py(yAct) + '" stroke="#bf360c" stroke-width="1.5" stroke-dasharray="4 3"/>';
+          s += '<circle cx="' + px(xAct) + '" cy="' + py(yAct) + '" r="5.5" fill="#bf360c"/>';
+          s += '<text x="' + ml + '" y="' + (H - 8) + '" font-family="Segoe UI, sans-serif" font-size="12" fill="#555">' + xmin + '</text>';
+          s += '<text x="' + (ml + pw) + '" y="' + (H - 8) + '" text-anchor="end" font-family="Segoe UI, sans-serif" font-size="12" fill="#555">' + xmax + '</text>';
+          s += '<text x="' + (ml + pw / 2) + '" y="' + (H - 8) + '" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="12" font-weight="700" fill="#00332b">' + etX + '</text>';
+          s += '<text x="' + (ml - 6) + '" y="' + (mt + 10) + '" text-anchor="end" font-family="Segoe UI, sans-serif" font-size="12" fill="#555">' + fmt(maxY) + '</text>';
+          s += '<text x="' + (ml - 6) + '" y="' + (mt + ph) + '" text-anchor="end" font-family="Segoe UI, sans-serif" font-size="12" fill="#555">0</text>';
+          s += '<text x="14" y="' + (mt + ph / 2) + '" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="12" font-weight="700" fill="#00332b" transform="rotate(-90 14 ' + (mt + ph / 2) + ')">' + etY + '</text>';
+          s += '</svg>';
+          contenedor.innerHTML = s;
+        }
+
+        /* ---------- tabla de efecto ---------- */
+        function tablaEfecto() {
+          var factores = [0.5, 1, 2, 3];
+          var vBase = volumen(rActual);
+          var html = '';
+          factores.forEach(function (k) {
+            var r = rActual * k;
+            var v = volumen(r);
+            var razon = k === 1 ? 'valor de referencia' : '× ' + (v / vBase).toFixed(v / vBase < 1 ? 3 : 0);
+            html += '<tr' + (k === 1 ? ' class="activa"' : '') + '><td>' + (Math.round(r * 100) / 100) + ' ' + unidad + '</td><td>' + fmt(v) + ' ' + unidad + '³</td><td>' + razon + '</td></tr>';
+          });
+          cuerpoEfecto.innerHTML = html;
+        }
+
+        /* ---------- actualización general ---------- */
+        function actualizar() {
+          rangoR.value = rActual;
+          numR.value = rActual;
+          uniR.textContent = unidad;
+
+          var p = Math.round(rActual * 10);
+          var num = 4 * p * p * p;
+          var den = 3000;
+          var v = volumen(rActual);
+          var cubo = Math.round(rActual * rActual * rActual * 1000) / 1000;
+
+          document.getElementById('p-sust').textContent = 'V = 4/3 · π · (' + rActual + ')³';
+          document.getElementById('p-cubo').textContent = '(' + rActual + ')³ = ' + cubo;
+          document.getElementById('p-valor').textContent = 'V = ' + fracTexto(num, den) + ' π ' + unidad + '³';
+          document.getElementById('p-aprox').textContent = '≈ ' + fmt(v) + ' ' + unidad + '³';
+
+          var extra = '';
+          if (unidad === 'cm') { extra = 'Equivale a ' + fmt(v / 1000) + ' litros.'; }
+          else if (unidad === 'm') { extra = 'Equivale a ' + fmt(v * 1000) + ' litros.'; }
+          document.getElementById('p-extra').textContent = extra;
+
+          dibujar();
+          dibujarGrafica(grafR, volumen, 0, 12, rActual, 'radio r', 'volumen V');
+          tablaEfecto();
+          revisarReto(v);
+        }
+
+        function fijarR(nuevo) {
+          nuevo = Math.round(nuevo * 2) / 2;
+          if (nuevo < 0.5) nuevo = 0.5;
+          if (nuevo > 12) nuevo = 12;
+          var anterior = rActual;
+          rActual = nuevo;
+          actualizar();
+          return { anterior: anterior, nuevo: nuevo };
+        }
+
+        /* ---------- reto ---------- */
+        function nuevoReto() {
+          var opciones = [];
+          for (var k = 1; k <= 24; k++) { opciones.push(k * 0.5); }
+          var r = opciones[Math.floor(Math.random() * opciones.length)];
+          metaVolumen = volumen(r);
+          metaReto.textContent = 'Volumen objetivo: aproximadamente ' + fmt(metaVolumen) + ' ' + unidad + '³';
+          fbReto.textContent = '';
+          fbReto.className = 'fb';
+        }
+        function revisarReto(v) {
+          if (metaVolumen === null) return;
+          metaReto.textContent = 'Volumen objetivo: aproximadamente ' + fmt(metaVolumen) + ' ' + unidad + '³';
+          var error = Math.abs(v - metaVolumen) / metaVolumen;
+          if (error <= 0.02) {
+            fbReto.textContent = 'Correcto: con r = ' + rActual + ' ' + unidad + ' el volumen coincide con el objetivo.';
+            fbReto.className = 'fb ok';
+          } else if (v < metaVolumen) {
+            fbReto.textContent = 'El volumen actual es menor que el objetivo: aumenta el radio.';
+            fbReto.className = 'fb no';
+          } else {
+            fbReto.textContent = 'El volumen actual es mayor que el objetivo: reduce el radio.';
+            fbReto.className = 'fb no';
+          }
+        }
+
+        /* ---------- eventos ---------- */
+        rangoR.addEventListener('input', function () { fijarR(parseFloat(rangoR.value)); fbCambio.textContent = ''; });
+        numR.addEventListener('change', function () {
+          var v = parseFloat(numR.value);
+          if (isNaN(v)) { v = rActual; }
+          fijarR(v); fbCambio.textContent = '';
+        });
+        document.getElementById('lbl-r').addEventListener('click', function () { rangoR.focus(); });
+
+        document.querySelectorAll('.u-btn').forEach(function (b) {
+          b.addEventListener('click', function () {
+            document.querySelectorAll('.u-btn').forEach(function (o) { o.setAttribute('aria-pressed', 'false'); });
+            b.setAttribute('aria-pressed', 'true');
+            unidad = b.getAttribute('data-u');
+            actualizar();
+          });
+        });
+
+        document.getElementById('btn-cilindro').addEventListener('click', function () {
+          mostrarCil = !mostrarCil;
+          this.setAttribute('aria-pressed', mostrarCil ? 'true' : 'false');
+          this.textContent = mostrarCil ? 'Ocultar el cilindro que la contiene' : 'Mostrar el cilindro que la contiene';
+          if (mostrarCil) {
+            fbCambio.textContent = 'El cilindro que contiene la esfera tiene radio r y altura 2r: su volumen es 2πr³. La esfera ocupa exactamente 2/3 de ese cilindro.';
+            fbCambio.className = 'fb ok';
+          } else {
+            fbCambio.textContent = '';
+          }
+          dibujar();
+        });
+
+        document.getElementById('btn-doble').addEventListener('click', function () {
+          var v1 = volumen(rActual);
+          var c = fijarR(rActual * 2);
+          if (c.nuevo === c.anterior) {
+            fbCambio.textContent = 'El radio ya está en el máximo del control (12).';
+            fbCambio.className = 'fb no';
+          } else {
+            var v2 = volumen(c.nuevo);
+            fbCambio.textContent = 'El radio pasó de ' + c.anterior + ' a ' + c.nuevo + ': el volumen se multiplicó por ' + (v2 / v1).toFixed(0) + '.';
+            fbCambio.className = 'fb ok';
+          }
+        });
+        document.getElementById('btn-mitad').addEventListener('click', function () {
+          var v1 = volumen(rActual);
+          var c = fijarR(rActual / 2);
+          if (c.nuevo === c.anterior) {
+            fbCambio.textContent = 'El radio ya está en el mínimo del control (0.5).';
+            fbCambio.className = 'fb no';
+          } else {
+            var v2 = volumen(c.nuevo);
+            fbCambio.textContent = 'El radio pasó de ' + c.anterior + ' a ' + c.nuevo + ': el volumen quedó en ' + (v2 / v1).toFixed(3) + ' del anterior, es decir, un octavo.';
+            fbCambio.className = 'fb ok';
+          }
+        });
+        document.getElementById('btn-reset').addEventListener('click', function () {
+          fijarR(3); fbCambio.textContent = ''; 
+        });
+        document.getElementById('btn-reto').addEventListener('click', nuevoReto);
+
+        actualizar();
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,482 @@
+<!doctype html>
+<!--
+  Interactivo · Volumen del cono
+  Spanish ASE Math · Nivel 4 · Tema 2 · Lección 2.1
+  José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago
+  Licencia: Creative Commons Atribución-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)
+  https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+-->
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactivo · Volumen del cono</title>
+    <meta name="author" content="José M. Fernández" />
+    <meta name="description" content="Interactivo para explorar cómo cambia el volumen de un cono al modificar el radio y la altura. Spanish ASE Math, Nivel 4, Lección 2.1." />
+    <meta name="license" content="CC BY-NC-SA 4.0" />
+    <link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" />
+    <style>
+      :root {
+        --tema: #004d40;
+        --tema-d: #00332b;
+        --tema-bg: #e0f2f1;
+        --tema-bg2: #b2dfdb;
+        --acento: #bf360c;
+        --txt: #222;
+        --bg: #f5f7fa;
+        --muted: #555;
+      }
+      * { box-sizing: border-box; }
+      body {
+        font-family: 'Segoe UI', system-ui, sans-serif;
+        margin: 0; background: var(--bg); color: var(--txt);
+        line-height: 1.6; font-size: 16px;
+      }
+      .contenedor { max-width: 940px; margin: 0 auto; padding: 24px; }
+      .sr-only {
+        position: absolute; width: 1px; height: 1px; padding: 0;
+        margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0);
+        white-space: nowrap; border: 0;
+      }
+      :focus-visible { outline: 3px solid var(--acento); outline-offset: 2px; }
+
+      header.principal {
+        background: linear-gradient(135deg, #00332b 0%, #004d40 55%, #00695c 100%);
+        color: #fff; padding: 30px 28px; border-radius: 14px;
+        margin-bottom: 20px; box-shadow: 0 4px 14px rgba(0, 51, 43, 0.28);
+      }
+      header.principal .ruta { font-size: 13px; letter-spacing: 0.4px; text-transform: uppercase; }
+      header.principal h1 { margin: 8px 0 6px; font-size: 25px; font-weight: 700; }
+      header.principal .meta { font-size: 14px; }
+
+      h2.seccion {
+        color: var(--tema-d); font-size: 20px; margin: 30px 0 12px;
+        padding-bottom: 6px; border-bottom: 3px solid var(--tema-bg);
+      }
+      h3 { color: var(--tema-d); font-size: 17px; margin: 18px 0 8px; }
+
+      .caja-objetivos {
+        background: var(--tema-bg); border-left: 6px solid var(--tema);
+        padding: 16px 22px; border-radius: 0 10px 10px 0; margin-bottom: 20px;
+      }
+      .caja-objetivos h2 { margin: 0 0 8px; color: var(--tema-d); font-size: 18px; }
+      .caja-objetivos ul { margin: 0; padding-left: 22px; }
+      .caja-objetivos li { margin: 4px 0; }
+
+      .bloque {
+        background: #fff; border-radius: 10px; padding: 18px 22px;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.06); margin-bottom: 18px;
+      }
+
+      .taller { display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start; }
+      .taller .figura { flex: 1 1 320px; min-width: 300px; text-align: center; }
+      .taller .mando { flex: 1 1 330px; min-width: 300px; }
+      .figura svg { max-width: 100%; height: auto; }
+
+      .control { margin-bottom: 14px; }
+      .control .nombre {
+        display: block; font-weight: 700; color: var(--tema-d);
+        font-size: 15px; margin-bottom: 4px; cursor: pointer;
+      }
+      .control .fila { display: flex; align-items: center; gap: 10px; }
+      input[type="range"] { flex: 1; accent-color: var(--tema); height: 26px; min-width: 110px; }
+      input[type="number"] {
+        width: 84px; padding: 6px 8px; font-size: 15px; font-family: inherit;
+        border: 2px solid var(--tema); border-radius: 7px; color: var(--txt);
+      }
+      .unidad-inline { font-weight: 700; color: var(--muted); font-size: 14px; }
+
+      .grupo-btn { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 16px; }
+      .btn {
+        background: var(--tema); color: #fff; border: 2px solid var(--tema);
+        padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 700;
+        cursor: pointer; font-family: inherit;
+      }
+      .btn:hover { background: var(--tema-d); border-color: var(--tema-d); }
+      .btn.sec { background: #fff; color: var(--tema-d); }
+      .btn.sec:hover { background: var(--tema-bg); }
+      .btn[aria-pressed="true"] { background: var(--acento); border-color: var(--acento); color: #fff; }
+
+      .resultado {
+        background: var(--tema-bg); border: 2px solid var(--tema);
+        border-radius: 10px; padding: 14px 18px; margin-top: 10px;
+      }
+      .resultado .paso { margin: 6px 0; font-size: 15px; }
+      .resultado .paso .et { font-weight: 700; color: var(--tema-d); }
+      .resultado .valor {
+        font-size: 24px; font-weight: 700; color: var(--tema-d);
+        margin: 8px 0 2px; text-align: center;
+      }
+      .resultado .aprox { text-align: center; font-size: 15px; color: #333; }
+      .resultado .extra { text-align: center; font-size: 14px; color: var(--muted); margin-top: 4px; }
+
+      .comparador {
+        display: flex; gap: 14px; flex-wrap: wrap; margin: 14px 0 0;
+      }
+      .tarjeta-comp {
+        flex: 1 1 200px; border-radius: 10px; padding: 12px 16px; font-size: 15px;
+      }
+      .comp-cono { background: var(--tema-bg); border: 2px solid var(--tema); color: var(--tema-d); }
+      .comp-cil { background: #ede7f6; border: 2px solid #5e35b1; color: #4527a0; }
+      .tarjeta-comp .rot { font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.3px; }
+      .tarjeta-comp .cifra { font-size: 20px; font-weight: 700; }
+
+      .caja-tip {
+        background: #e8f5e9; border-left: 5px solid #2e7d32;
+        padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 14px 0;
+        color: #1b5e20; font-size: 15px;
+      }
+      .caja-atencion {
+        background: #fff8e1; border-left: 5px solid #f9a825;
+        padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 14px 0;
+        font-size: 15px; color: #5c3900;
+      }
+      .caja-atencion strong { color: #5c3900; }
+
+      .graficas { display: flex; flex-wrap: wrap; gap: 16px; }
+      .grafica { flex: 1 1 300px; min-width: 280px; text-align: center; }
+      .grafica h3 { margin-top: 0; }
+      .grafica p { font-size: 14px; color: var(--muted); margin: 4px 0 0; }
+
+      .reto { background: #ede7f6; border-left: 6px solid #5e35b1; padding: 16px 20px; border-radius: 0 10px 10px 0; margin: 18px 0; }
+      .reto h2 { margin-top: 0; color: #4527a0; font-size: 19px; }
+      .reto .meta-reto { font-size: 19px; font-weight: 700; color: #4527a0; margin: 8px 0; }
+      .fb { margin-top: 10px; font-weight: 700; font-size: 15px; min-height: 24px; }
+      .fb.ok { color: #1b5e20; }
+      .fb.no { color: #4527a0; }
+
+      footer {
+        text-align: center; padding: 20px; color: var(--muted); font-size: 13px;
+        border-top: 1px solid #ddd; margin-top: 24px;
+      }
+      footer a { color: var(--tema-d); }
+    </style>
+  </head>
+  <body>
+    <div class="contenedor">
+      <header class="principal">
+        <div class="ruta">Spanish ASE Math · Nivel 4 · Tema 2 · Lección 2.1</div>
+        <h1>Interactivo · Volumen del cono</h1>
+        <div class="meta">V = 1/3 πr²h · Mueve el radio y la altura y observa cómo cambia el volumen</div>
+      </header>
+
+      <div class="caja-objetivos">
+        <h2>Qué se puede explorar aquí</h2>
+        <ul>
+          <li>Cómo cambia el volumen del cono al modificar el <strong>radio</strong> y al modificar la <strong>altura</strong>.</li>
+          <li>Por qué el radio pesa más que la altura: el radio está elevado al cuadrado y la altura no.</li>
+          <li>Por qué la fórmula lleva el factor <strong>1/3</strong>: el cono es la tercera parte del cilindro de igual base y altura.</li>
+        </ul>
+      </div>
+
+      <h2 class="seccion">1. Taller del cono</h2>
+      <div class="bloque">
+        <div class="taller">
+          <div class="figura">
+            <div id="dibujo"></div>
+            <div class="grupo-btn" style="justify-content: center">
+              <button type="button" class="btn sec" id="btn-cilindro" aria-pressed="false">Mostrar el cilindro de igual base y altura</button>
+            </div>
+          </div>
+
+          <div class="mando">
+            <div class="control">
+              <span class="nombre" id="lbl-r">Radio de la base (r)</span>
+              <div class="fila">
+                <input type="range" id="rango-r" min="0.5" max="10" step="0.5" value="3" aria-labelledby="lbl-r" />
+                <input type="number" id="num-r" min="0.5" max="10" step="0.5" value="3" aria-labelledby="lbl-r" />
+                <span class="unidad-inline uni">cm</span>
+              </div>
+            </div>
+
+            <div class="control">
+              <span class="nombre" id="lbl-h">Altura (h)</span>
+              <div class="fila">
+                <input type="range" id="rango-h" min="0.5" max="16" step="0.5" value="10" aria-labelledby="lbl-h" />
+                <input type="number" id="num-h" min="0.5" max="16" step="0.5" value="10" aria-labelledby="lbl-h" />
+                <span class="unidad-inline uni">cm</span>
+              </div>
+            </div>
+
+            <div class="control">
+              <span class="nombre" id="lbl-u">Unidad de medida</span>
+              <div class="grupo-btn" role="group" aria-labelledby="lbl-u">
+                <button type="button" class="btn sec u-btn" data-u="cm" aria-pressed="true">cm</button>
+                <button type="button" class="btn sec u-btn" data-u="m" aria-pressed="false">m</button>
+                <button type="button" class="btn sec u-btn" data-u="pulg" aria-pressed="false">pulg</button>
+              </div>
+            </div>
+
+            <div class="resultado" aria-live="polite">
+              <div class="paso"><span class="et">Fórmula:</span> V = 1/3 πr²h</div>
+              <div class="paso"><span class="et">Sustitución:</span> <span id="p-sust"></span></div>
+              <div class="paso"><span class="et">Se eleva el radio al cuadrado:</span> <span id="p-cuad"></span></div>
+              <div class="valor" id="p-valor"></div>
+              <div class="aprox" id="p-aprox"></div>
+              <div class="extra" id="p-extra"></div>
+            </div>
+
+            <div class="grupo-btn" style="margin-top: 12px">
+              <button type="button" class="btn" id="btn-doble-r">Duplicar el radio</button>
+              <button type="button" class="btn" id="btn-doble-h">Duplicar la altura</button>
+              <button type="button" class="btn sec" id="btn-reset">Restablecer</button>
+            </div>
+            <div class="fb" id="fb-cambio"></div>
+          </div>
+        </div>
+
+        <div class="comparador">
+          <div class="tarjeta-comp comp-cono">
+            <div class="rot">Cono</div>
+            <div class="cifra" id="c-cono"></div>
+          </div>
+          <div class="tarjeta-comp comp-cil">
+            <div class="rot">Cilindro de igual base y altura</div>
+            <div class="cifra" id="c-cil"></div>
+          </div>
+        </div>
+
+        <div class="caja-tip">
+          <strong>El factor 1/3:</strong> con cualquier par de valores de r y h, el volumen del cono es exactamente la tercera parte del cilindro que aparece en las dos tarjetas. Por eso la fórmula del cono es la del cilindro (πr²h) multiplicada por 1/3.
+        </div>
+
+        <div class="caja-atencion">
+          <strong>Solo el radio se eleva al cuadrado:</strong> en 1/3 πr²h el exponente afecta únicamente a r. La altura se multiplica tal como está. Elevar también la altura es uno de los errores más frecuentes en el examen.
+        </div>
+      </div>
+
+      <h2 class="seccion">2. El radio pesa más que la altura</h2>
+      <div class="bloque">
+        <div class="graficas">
+          <div class="grafica">
+            <h3>Si cambia el radio (altura fija)</h3>
+            <div id="graf-r"></div>
+            <p>Curva: al duplicar el radio, el volumen se multiplica por cuatro.</p>
+          </div>
+          <div class="grafica">
+            <h3>Si cambia la altura (radio fijo)</h3>
+            <div id="graf-h"></div>
+            <p>Recta: al duplicar la altura, el volumen solo se duplica.</p>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="seccion">3. Reto</h2>
+      <div class="reto">
+        <h2>Ajusta el cono hasta alcanzar el volumen pedido</h2>
+        <p>Mueve el radio y la altura hasta que el volumen se acerque al valor propuesto (se acepta un margen del 2 %). Hay varias combinaciones válidas.</p>
+        <div class="meta-reto" id="meta-reto"></div>
+        <div class="grupo-btn">
+          <button type="button" class="btn" id="btn-reto">Nuevo reto</button>
+        </div>
+        <div class="fb" id="fb-reto" aria-live="polite"></div>
+      </div>
+
+      <footer>
+        Spanish ASE Math · Nivel 4 · Lección 2.1 · Interactivo de volumen del cono<br />
+        José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago<br />
+        <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" target="_blank" rel="noopener noreferrer">Licencia CC BY-NC-SA 4.0</a>
+      </footer>
+    </div>
+
+    <script>
+      (function () {
+        var unidad = 'cm';
+        var rAct = 3, hAct = 10;
+        var mostrarCil = false;
+        var metaVolumen = null;
+
+        var rangoR = document.getElementById('rango-r');
+        var numR = document.getElementById('num-r');
+        var rangoH = document.getElementById('rango-h');
+        var numH = document.getElementById('num-h');
+        var dibujo = document.getElementById('dibujo');
+        var grafR = document.getElementById('graf-r');
+        var grafH = document.getElementById('graf-h');
+        var fbCambio = document.getElementById('fb-cambio');
+        var fbReto = document.getElementById('fb-reto');
+        var metaReto = document.getElementById('meta-reto');
+
+        function mcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { var t = b; b = a % b; a = t; } return a; }
+        function fracTexto(n, d) { var g = mcd(n, d) || 1; n = n / g; d = d / g; return d === 1 ? String(n) : n + '/' + d; }
+        function fmt(x) {
+          var dec = Math.abs(x) >= 1000 ? 0 : 2;
+          return x.toFixed(dec).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+        function volCono(r, h) { return (1 / 3) * Math.PI * r * r * h; }
+        function volCil(r, h) { return Math.PI * r * r * h; }
+
+        /* ---------- figura ---------- */
+        function dibujar() {
+          var W = 340, H = 320, cx = 170, base = 250;
+          var px = 11;
+          var rp = rAct * px, hp = hAct * px;
+          if (hp > 210) { hp = 210; }
+          var apex = base - hp;
+          var ry = Math.max(6, rp * 0.3);
+          var s = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cono de radio ' + rAct + ' y altura ' + hAct + ' ' + unidad + ' dibujado a escala.">';
+          s += '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#ffffff"/>';
+          if (mostrarCil) {
+            s += '<rect x="' + (cx - rp) + '" y="' + apex + '" width="' + (2 * rp) + '" height="' + hp + '" fill="#ede7f6" fill-opacity="0.6" stroke="#5e35b1" stroke-width="2" stroke-dasharray="6 4"/>';
+            s += '<ellipse cx="' + cx + '" cy="' + apex + '" rx="' + rp + '" ry="' + ry + '" fill="#ede7f6" stroke="#5e35b1" stroke-width="2" stroke-dasharray="6 4"/>';
+          }
+          s += '<ellipse cx="' + cx + '" cy="' + base + '" rx="' + rp + '" ry="' + ry + '" fill="#b2dfdb" stroke="#004d40" stroke-width="2.5"/>';
+          s += '<path d="M' + (cx - rp) + ' ' + base + ' L' + cx + ' ' + apex + ' L' + (cx + rp) + ' ' + base + '" fill="#b2dfdb" fill-opacity="0.85" stroke="#004d40" stroke-width="2.5"/>';
+          s += '<line x1="' + cx + '" y1="' + base + '" x2="' + cx + '" y2="' + apex + '" stroke="#bf360c" stroke-width="2.5" stroke-dasharray="5 3"/>';
+          s += '<line x1="' + cx + '" y1="' + base + '" x2="' + (cx + rp) + '" y2="' + base + '" stroke="#bf360c" stroke-width="3"/>';
+          s += '<text x="' + (cx + 8) + '" y="' + (apex + hp / 2) + '" font-family="Segoe UI, sans-serif" font-size="14" font-weight="700" fill="#bf360c">h = ' + hAct + '</text>';
+          s += '<text x="' + (cx + rp / 2) + '" y="' + (base + 22) + '" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="14" font-weight="700" fill="#bf360c">r = ' + rAct + '</text>';
+          s += '<text x="' + cx + '" y="' + (H - 10) + '" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" fill="#555">medidas en ' + unidad + '</text>';
+          s += '</svg>';
+          dibujo.innerHTML = s;
+        }
+
+        /* ---------- gráfica ---------- */
+        function dibujarGrafica(contenedor, f, xmin, xmax, xAct, etX, etY) {
+          var W = 320, H = 200, ml = 52, mr = 14, mt = 14, mb = 38;
+          var pw = W - ml - mr, ph = H - mt - mb;
+          var n = 70, i, x, y, maxY = 0, pts = [];
+          for (i = 0; i <= n; i++) { x = xmin + (xmax - xmin) * i / n; y = f(x); pts.push([x, y]); if (y > maxY) maxY = y; }
+          if (maxY <= 0) maxY = 1;
+          function px(v) { return ml + (v - xmin) / (xmax - xmin) * pw; }
+          function py(v) { return mt + ph - (v / maxY) * ph; }
+          var d = '';
+          for (i = 0; i < pts.length; i++) { d += (i === 0 ? 'M' : 'L') + px(pts[i][0]).toFixed(1) + ' ' + py(pts[i][1]).toFixed(1); }
+          var yAct = f(xAct);
+          var s = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gráfica del volumen frente a ' + etX + '. En el valor actual ' + xAct + ', el volumen es aproximadamente ' + fmt(yAct) + '.">';
+          s += '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#ffffff"/>';
+          s += '<line x1="' + ml + '" y1="' + (mt + ph) + '" x2="' + (ml + pw) + '" y2="' + (mt + ph) + '" stroke="#555" stroke-width="1.5"/>';
+          s += '<line x1="' + ml + '" y1="' + mt + '" x2="' + ml + '" y2="' + (mt + ph) + '" stroke="#555" stroke-width="1.5"/>';
+          s += '<path d="' + d + '" fill="none" stroke="#004d40" stroke-width="3"/>';
+          s += '<line x1="' + px(xAct) + '" y1="' + py(yAct) + '" x2="' + px(xAct) + '" y2="' + (mt + ph) + '" stroke="#bf360c" stroke-width="1.5" stroke-dasharray="4 3"/>';
+          s += '<line x1="' + ml + '" y1="' + py(yAct) + '" x2="' + px(xAct) + '" y2="' + py(yAct) + '" stroke="#bf360c" stroke-width="1.5" stroke-dasharray="4 3"/>';
+          s += '<circle cx="' + px(xAct) + '" cy="' + py(yAct) + '" r="5.5" fill="#bf360c"/>';
+          s += '<text x="' + ml + '" y="' + (H - 8) + '" font-family="Segoe UI, sans-serif" font-size="12" fill="#555">' + xmin + '</text>';
+          s += '<text x="' + (ml + pw) + '" y="' + (H - 8) + '" text-anchor="end" font-family="Segoe UI, sans-serif" font-size="12" fill="#555">' + xmax + '</text>';
+          s += '<text x="' + (ml + pw / 2) + '" y="' + (H - 8) + '" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="12" font-weight="700" fill="#00332b">' + etX + '</text>';
+          s += '<text x="' + (ml - 6) + '" y="' + (mt + 10) + '" text-anchor="end" font-family="Segoe UI, sans-serif" font-size="12" fill="#555">' + fmt(maxY) + '</text>';
+          s += '<text x="' + (ml - 6) + '" y="' + (mt + ph) + '" text-anchor="end" font-family="Segoe UI, sans-serif" font-size="12" fill="#555">0</text>';
+          s += '<text x="14" y="' + (mt + ph / 2) + '" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="12" font-weight="700" fill="#00332b" transform="rotate(-90 14 ' + (mt + ph / 2) + ')">' + etY + '</text>';
+          s += '</svg>';
+          contenedor.innerHTML = s;
+        }
+
+        /* ---------- actualización ---------- */
+        function actualizar() {
+          rangoR.value = rAct; numR.value = rAct;
+          rangoH.value = hAct; numH.value = hAct;
+          document.querySelectorAll('.uni').forEach(function (e) { e.textContent = unidad; });
+
+          var p = Math.round(rAct * 10), q = Math.round(hAct * 10);
+          var num = p * p * q, den = 3000;
+          var v = volCono(rAct, hAct);
+          var vc = volCil(rAct, hAct);
+
+          document.getElementById('p-sust').textContent = 'V = 1/3 · π · (' + rAct + ')² · ' + hAct;
+          document.getElementById('p-cuad').textContent = '(' + rAct + ')² = ' + (Math.round(rAct * rAct * 100) / 100);
+          document.getElementById('p-valor').textContent = 'V = ' + fracTexto(num, den) + ' π ' + unidad + '³';
+          document.getElementById('p-aprox').textContent = '≈ ' + fmt(v) + ' ' + unidad + '³';
+
+          var extra = '';
+          if (unidad === 'cm') { extra = 'Equivale a ' + fmt(v / 1000) + ' litros.'; }
+          else if (unidad === 'm') { extra = 'Equivale a ' + fmt(v * 1000) + ' litros.'; }
+          document.getElementById('p-extra').textContent = extra;
+
+          document.getElementById('c-cono').textContent = fmt(v) + ' ' + unidad + '³';
+          document.getElementById('c-cil').textContent = fmt(vc) + ' ' + unidad + '³ (el triple)';
+
+          dibujar();
+          dibujarGrafica(grafR, function (x) { return volCono(x, hAct); }, 0, 10, rAct, 'radio r', 'volumen V');
+          dibujarGrafica(grafH, function (x) { return volCono(rAct, x); }, 0, 16, hAct, 'altura h', 'volumen V');
+          revisarReto(v);
+        }
+
+        function fijarR(v) {
+          v = Math.round(v * 2) / 2;
+          if (v < 0.5) v = 0.5; if (v > 10) v = 10;
+          var ant = rAct; rAct = v; actualizar(); return { ant: ant, nuevo: v };
+        }
+        function fijarH(v) {
+          v = Math.round(v * 2) / 2;
+          if (v < 0.5) v = 0.5; if (v > 16) v = 16;
+          var ant = hAct; hAct = v; actualizar(); return { ant: ant, nuevo: v };
+        }
+
+        /* ---------- reto ---------- */
+        function nuevoReto() {
+          var r = (Math.floor(Math.random() * 16) + 2) * 0.5;
+          var h = (Math.floor(Math.random() * 26) + 4) * 0.5;
+          metaVolumen = volCono(r, h);
+          fbReto.textContent = ''; fbReto.className = 'fb';
+          revisarReto(volCono(rAct, hAct));
+        }
+        function revisarReto(v) {
+          if (metaVolumen === null) return;
+          metaReto.textContent = 'Volumen objetivo: aproximadamente ' + fmt(metaVolumen) + ' ' + unidad + '³';
+          var error = Math.abs(v - metaVolumen) / metaVolumen;
+          if (error <= 0.02) {
+            fbReto.textContent = 'Correcto: con r = ' + rAct + ' y h = ' + hAct + ' ' + unidad + ' se alcanza el objetivo.';
+            fbReto.className = 'fb ok';
+          } else if (v < metaVolumen) {
+            fbReto.textContent = 'El volumen actual es menor que el objetivo: aumenta el radio o la altura.';
+            fbReto.className = 'fb no';
+          } else {
+            fbReto.textContent = 'El volumen actual es mayor que el objetivo: reduce el radio o la altura.';
+            fbReto.className = 'fb no';
+          }
+        }
+
+        /* ---------- eventos ---------- */
+        rangoR.addEventListener('input', function () { fijarR(parseFloat(rangoR.value)); fbCambio.textContent = ''; });
+        rangoH.addEventListener('input', function () { fijarH(parseFloat(rangoH.value)); fbCambio.textContent = ''; });
+        numR.addEventListener('change', function () { var v = parseFloat(numR.value); fijarR(isNaN(v) ? rAct : v); });
+        numH.addEventListener('change', function () { var v = parseFloat(numH.value); fijarH(isNaN(v) ? hAct : v); });
+        document.getElementById('lbl-r').addEventListener('click', function () { rangoR.focus(); });
+        document.getElementById('lbl-h').addEventListener('click', function () { rangoH.focus(); });
+
+        document.querySelectorAll('.u-btn').forEach(function (b) {
+          b.addEventListener('click', function () {
+            document.querySelectorAll('.u-btn').forEach(function (o) { o.setAttribute('aria-pressed', 'false'); });
+            b.setAttribute('aria-pressed', 'true');
+            unidad = b.getAttribute('data-u');
+            actualizar();
+          });
+        });
+
+        document.getElementById('btn-cilindro').addEventListener('click', function () {
+          mostrarCil = !mostrarCil;
+          this.setAttribute('aria-pressed', mostrarCil ? 'true' : 'false');
+          this.textContent = mostrarCil ? 'Ocultar el cilindro de igual base y altura' : 'Mostrar el cilindro de igual base y altura';
+          if (mostrarCil) {
+            fbCambio.textContent = 'El cono ocupa la tercera parte de ese cilindro: harían falta tres conos iguales para llenarlo.';
+            fbCambio.className = 'fb ok';
+          } else { fbCambio.textContent = ''; }
+          dibujar();
+        });
+
+        document.getElementById('btn-doble-r').addEventListener('click', function () {
+          var v1 = volCono(rAct, hAct);
+          var c = fijarR(rAct * 2);
+          if (c.nuevo === c.ant) { fbCambio.textContent = 'El radio ya está en el máximo del control (10).'; fbCambio.className = 'fb no'; return; }
+          var v2 = volCono(c.nuevo, hAct);
+          fbCambio.textContent = 'El radio pasó de ' + c.ant + ' a ' + c.nuevo + ': el volumen se multiplicó por ' + (v2 / v1).toFixed(0) + '.';
+          fbCambio.className = 'fb ok';
+        });
+        document.getElementById('btn-doble-h').addEventListener('click', function () {
+          var v1 = volCono(rAct, hAct);
+          var c = fijarH(hAct * 2);
+          if (c.nuevo === c.ant) { fbCambio.textContent = 'La altura ya está en el máximo del control (16).'; fbCambio.className = 'fb no'; return; }
+          var v2 = volCono(rAct, c.nuevo);
+          fbCambio.textContent = 'La altura pasó de ' + c.ant + ' a ' + c.nuevo + ': el volumen se multiplicó por ' + (v2 / v1).toFixed(0) + '.';
+          fbCambio.className = 'fb ok';
+        });
+        document.getElementById('btn-reset').addEventListener('click', function () {
+          rAct = 3; hAct = 10; actualizar(); fbCambio.textContent = '';
+        });
+        document.getElementById('btn-reto').addEventListener('click', nuevoReto);
+
+        actualizar();
+      })();
+    </script>
+  </body>
+</html>

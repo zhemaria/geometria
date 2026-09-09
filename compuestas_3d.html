@@ -1,0 +1,641 @@
+<!doctype html>
+<!--
+  Interactivo · Figuras 3D compuestas
+  Spanish ASE Math · Nivel 4 · Tema 2 · Lección 2.2
+  José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago
+  Licencia: Creative Commons Atribución-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)
+  https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+-->
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactivo · Figuras 3D compuestas</title>
+    <meta name="author" content="José M. Fernández" />
+    <meta name="description" content="Interactivo para descomponer figuras 3D compuestas en sólidos simples y sumar o restar sus volúmenes. Spanish ASE Math, Nivel 4, Lección 2.2." />
+    <meta name="license" content="CC BY-NC-SA 4.0" />
+    <link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" />
+    <style>
+      :root {
+        --tema: #004d40;
+        --tema-d: #00332b;
+        --tema-bg: #e0f2f1;
+        --tema-bg2: #b2dfdb;
+        --acento: #bf360c;
+        --txt: #222;
+        --bg: #f5f7fa;
+        --muted: #555;
+      }
+      * { box-sizing: border-box; }
+      body {
+        font-family: 'Segoe UI', system-ui, sans-serif;
+        margin: 0; background: var(--bg); color: var(--txt);
+        line-height: 1.6; font-size: 16px;
+      }
+      .contenedor { max-width: 960px; margin: 0 auto; padding: 24px; }
+      .sr-only {
+        position: absolute; width: 1px; height: 1px; padding: 0;
+        margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0);
+        white-space: nowrap; border: 0;
+      }
+      :focus-visible { outline: 3px solid var(--acento); outline-offset: 2px; }
+
+      header.principal {
+        background: linear-gradient(135deg, #00332b 0%, #004d40 55%, #00695c 100%);
+        color: #fff; padding: 30px 28px; border-radius: 14px;
+        margin-bottom: 20px; box-shadow: 0 4px 14px rgba(0, 51, 43, 0.28);
+      }
+      header.principal .ruta { font-size: 13px; letter-spacing: 0.4px; text-transform: uppercase; }
+      header.principal h1 { margin: 8px 0 6px; font-size: 25px; font-weight: 700; }
+      header.principal .meta { font-size: 14px; }
+
+      h2.seccion {
+        color: var(--tema-d); font-size: 20px; margin: 30px 0 12px;
+        padding-bottom: 6px; border-bottom: 3px solid var(--tema-bg);
+      }
+      h3 { color: var(--tema-d); font-size: 17px; margin: 18px 0 8px; }
+
+      .caja-objetivos {
+        background: var(--tema-bg); border-left: 6px solid var(--tema);
+        padding: 16px 22px; border-radius: 0 10px 10px 0; margin-bottom: 20px;
+      }
+      .caja-objetivos h2 { margin: 0 0 8px; color: var(--tema-d); font-size: 18px; }
+      .caja-objetivos ul { margin: 0; padding-left: 22px; }
+      .caja-objetivos li { margin: 4px 0; }
+
+      .bloque {
+        background: #fff; border-radius: 10px; padding: 18px 22px;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.06); margin-bottom: 18px;
+      }
+
+      .taller { display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start; }
+      .taller .figura { flex: 1 1 330px; min-width: 300px; text-align: center; }
+      .taller .mando { flex: 1 1 330px; min-width: 300px; }
+      .figura svg { max-width: 100%; height: auto; }
+
+      .control { margin-bottom: 12px; }
+      .control .nombre {
+        display: block; font-weight: 700; color: var(--tema-d);
+        font-size: 15px; margin-bottom: 4px; cursor: pointer;
+      }
+      .control .fila { display: flex; align-items: center; gap: 10px; }
+      input[type="range"] { flex: 1; accent-color: var(--tema); height: 26px; min-width: 100px; }
+      input[type="number"] {
+        width: 80px; padding: 6px 8px; font-size: 15px; font-family: inherit;
+        border: 2px solid var(--tema); border-radius: 7px; color: var(--txt);
+      }
+      .unidad-inline { font-weight: 700; color: var(--muted); font-size: 14px; }
+
+      .grupo-btn { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 14px; }
+      .btn {
+        background: var(--tema); color: #fff; border: 2px solid var(--tema);
+        padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 700;
+        cursor: pointer; font-family: inherit;
+      }
+      .btn:hover { background: var(--tema-d); border-color: var(--tema-d); }
+      .btn.sec { background: #fff; color: var(--tema-d); }
+      .btn.sec:hover { background: var(--tema-bg); }
+      .btn[aria-pressed="true"] { background: var(--acento); border-color: var(--acento); color: #fff; }
+
+      .tabla { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px; }
+      .tabla caption { text-align: left; font-size: 14px; color: var(--muted); padding-bottom: 6px; }
+      .tabla th, .tabla td { border: 1px solid #e0e0e0; padding: 8px 10px; text-align: left; vertical-align: top; }
+      .tabla th { background: var(--tema); color: #fff; }
+      .tabla td:first-child { font-weight: 700; color: var(--tema-d); }
+      .tabla tr.total td { background: var(--tema-bg); font-size: 16px; font-weight: 700; color: var(--tema-d); }
+      .chip { display: inline-block; width: 14px; height: 14px; border-radius: 4px; border: 2px solid #333; margin-right: 6px; vertical-align: -2px; }
+
+      .resultado {
+        background: var(--tema-bg); border: 2px solid var(--tema);
+        border-radius: 10px; padding: 14px 18px; margin-top: 10px; text-align: center;
+      }
+      .resultado .valor { font-size: 24px; font-weight: 700; color: var(--tema-d); }
+      .resultado .aprox { font-size: 15px; color: #333; }
+      .resultado .extra { font-size: 14px; color: var(--muted); }
+
+      .caja-tip {
+        background: #e8f5e9; border-left: 5px solid #2e7d32;
+        padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 14px 0;
+        color: #1b5e20; font-size: 15px;
+      }
+      .caja-atencion {
+        background: #fff8e1; border-left: 5px solid #f9a825;
+        padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 14px 0;
+        font-size: 15px; color: #5c3900;
+      }
+      .caja-atencion strong { color: #5c3900; }
+
+      .reto { background: #ede7f6; border-left: 6px solid #5e35b1; padding: 16px 20px; border-radius: 0 10px 10px 0; margin: 18px 0; }
+      .reto h2 { margin-top: 0; color: #4527a0; font-size: 19px; }
+      .fb { margin-top: 10px; font-weight: 700; font-size: 15px; min-height: 24px; }
+      .fb.ok { color: #1b5e20; }
+      .fb.no { color: #4527a0; }
+
+      .opciones-piezas { display: flex; flex-wrap: wrap; gap: 8px; }
+      .op-pieza {
+        background: #fff; border: 2px solid #b39ddb; color: #4527a0;
+        border-radius: 8px; padding: 8px 14px; font-size: 14px; font-weight: 700;
+        cursor: pointer; font-family: inherit;
+      }
+      .op-pieza[aria-pressed="true"] { background: #5e35b1; border-color: #4527a0; color: #fff; }
+
+      footer {
+        text-align: center; padding: 20px; color: var(--muted); font-size: 13px;
+        border-top: 1px solid #ddd; margin-top: 24px;
+      }
+      footer a { color: var(--tema-d); }
+    </style>
+  </head>
+  <body>
+    <div class="contenedor">
+      <header class="principal">
+        <div class="ruta">Spanish ASE Math · Nivel 4 · Tema 2 · Lección 2.2</div>
+        <h1>Interactivo · Figuras 3D compuestas</h1>
+        <div class="meta">Descompón la figura en sólidos simples y observa cómo se suman o se restan los volúmenes</div>
+      </header>
+
+      <div class="caja-objetivos">
+        <h2>Qué se puede explorar aquí</h2>
+        <ul>
+          <li>Cómo se <strong>separa</strong> una figura compuesta en los sólidos simples que la forman.</li>
+          <li>Cuándo los volúmenes parciales se <strong>suman</strong> y cuándo se <strong>restan</strong>.</li>
+          <li>Cómo cambia el total al modificar las dimensiones de una sola de las partes.</li>
+        </ul>
+      </div>
+
+      <h2 class="seccion">1. Elegir la figura</h2>
+      <div class="bloque">
+        <div class="grupo-btn" role="group" aria-label="Figura compuesta">
+          <button type="button" class="btn sec f-btn" data-f="silo" aria-pressed="true">Silo (cilindro + cono)</button>
+          <button type="button" class="btn sec f-btn" data-f="tanque" aria-pressed="false">Tanque (cilindro + semiesfera)</button>
+          <button type="button" class="btn sec f-btn" data-f="capsula" aria-pressed="false">Cápsula (cilindro + 2 semiesferas)</button>
+          <button type="button" class="btn sec f-btn" data-f="torre" aria-pressed="false">Torre (prisma + pirámide)</button>
+          <button type="button" class="btn sec f-btn" data-f="perforado" aria-pressed="false">Bloque perforado (prisma − cilindro)</button>
+        </div>
+        <p id="descripcion-figura" style="font-size: 15px; color: #333"></p>
+      </div>
+
+      <h2 class="seccion">2. Taller de descomposición</h2>
+      <div class="bloque">
+        <div class="taller">
+          <div class="figura">
+            <div id="dibujo"></div>
+            <div class="grupo-btn" style="justify-content: center">
+              <button type="button" class="btn" id="btn-separar" aria-pressed="false">Separar las partes</button>
+            </div>
+            <p style="font-size: 14px; color: var(--muted); margin: 0">
+              Cada parte se dibuja con el color que aparece en la tabla de volúmenes parciales.
+            </p>
+          </div>
+
+          <div class="mando">
+            <div id="controles"></div>
+            <div class="control">
+              <span class="nombre" id="lbl-u">Unidad de medida</span>
+              <div class="grupo-btn" role="group" aria-labelledby="lbl-u">
+                <button type="button" class="btn sec u-btn" data-u="cm" aria-pressed="false">cm</button>
+                <button type="button" class="btn sec u-btn" data-u="m" aria-pressed="true">m</button>
+                <button type="button" class="btn sec u-btn" data-u="pies" aria-pressed="false">pies</button>
+              </div>
+            </div>
+            <div class="resultado" aria-live="polite">
+              <div class="valor" id="p-valor"></div>
+              <div class="aprox" id="p-aprox"></div>
+              <div class="extra" id="p-extra"></div>
+            </div>
+          </div>
+        </div>
+
+        <table class="tabla" id="tabla-partes">
+          <caption>Volumen de cada parte y volumen total de la figura compuesta.</caption>
+          <thead>
+            <tr>
+              <th scope="col">Parte</th>
+              <th scope="col">Fórmula</th>
+              <th scope="col">Sustitución</th>
+              <th scope="col">Volumen parcial</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpo-partes"></tbody>
+        </table>
+
+        <div class="caja-tip">
+          <strong>Antes de calcular, se nombran las partes.</strong> El botón «Separar las partes» hace visible lo que en el examen hay que imaginar: la figura se abre en sólidos simples, se calcula cada uno por separado y solo al final se combinan los resultados.
+        </div>
+
+        <div class="caja-atencion" id="nota-figura"></div>
+      </div>
+
+      <h2 class="seccion">3. Reto de identificación</h2>
+      <div class="reto">
+        <h2>¿De qué sólidos está formada esta figura?</h2>
+        <p>Marca todos los sólidos simples que componen la figura seleccionada y comprueba la respuesta.</p>
+        <div class="opciones-piezas" id="opciones-piezas">
+          <button type="button" class="op-pieza" data-p="cilindro" aria-pressed="false">Cilindro</button>
+          <button type="button" class="op-pieza" data-p="cono" aria-pressed="false">Cono</button>
+          <button type="button" class="op-pieza" data-p="semiesfera" aria-pressed="false">Semiesfera</button>
+          <button type="button" class="op-pieza" data-p="esfera" aria-pressed="false">Esfera completa</button>
+          <button type="button" class="op-pieza" data-p="prisma" aria-pressed="false">Prisma rectangular</button>
+          <button type="button" class="op-pieza" data-p="piramide" aria-pressed="false">Pirámide</button>
+        </div>
+        <div class="grupo-btn" style="margin-top: 12px">
+          <button type="button" class="btn" id="btn-comprobar">Comprobar</button>
+          <button type="button" class="btn sec" id="btn-limpiar">Limpiar selección</button>
+        </div>
+        <div class="fb" id="fb-reto" aria-live="polite"></div>
+      </div>
+
+      <footer>
+        Spanish ASE Math · Nivel 4 · Lección 2.2 · Interactivo de figuras 3D compuestas<br />
+        José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago<br />
+        <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" target="_blank" rel="noopener noreferrer">Licencia CC BY-NC-SA 4.0</a>
+      </footer>
+    </div>
+
+    <script>
+      (function () {
+        /* ============ utilidades de fracciones exactas ============ */
+        function mcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { var t = b; b = a % b; a = t; } return a; }
+        function rat(n, d) { if (d < 0) { n = -n; d = -d; } var g = mcd(n, d) || 1; return { n: n / g, d: d / g }; }
+        function ratSuma(x, y) { return rat(x.n * y.d + y.n * x.d, x.d * y.d); }
+        function ratTexto(x) { return x.d === 1 ? String(x.n) : x.n + '/' + x.d; }
+        function ratNum(x) { return x.n / x.d; }
+        function cero() { return { n: 0, d: 1 }; }
+        function fmt(x) {
+          var dec = Math.abs(x) >= 1000 ? 0 : 2;
+          return x.toFixed(dec).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+        function ent(x) { return Math.round(x * 2); } /* dimensión en medios */
+
+        /* volúmenes exactos: devuelven {pi: rat, uno: rat} */
+        function vCilindro(r, h) { return { pi: rat(ent(r) * ent(r) * ent(h), 8), uno: cero() }; }
+        function vCono(r, h) { return { pi: rat(ent(r) * ent(r) * ent(h), 24), uno: cero() }; }
+        function vSemiesfera(r) { return { pi: rat(ent(r) * ent(r) * ent(r), 12), uno: cero() }; }
+        function vPrisma(a, b, c) { return { pi: cero(), uno: rat(ent(a) * ent(b) * ent(c), 8) }; }
+        function vPiramide(a, b, h) { return { pi: cero(), uno: rat(ent(a) * ent(b) * ent(h), 24) }; }
+        function neg(v) { return { pi: rat(-v.pi.n, v.pi.d), uno: rat(-v.uno.n, v.uno.d) }; }
+        function sumaV(a, b) { return { pi: ratSuma(a.pi, b.pi), uno: ratSuma(a.uno, b.uno) }; }
+        function decimalV(v) { return ratNum(v.pi) * Math.PI + ratNum(v.uno); }
+        function textoV(v) {
+          var partes = [];
+          if (ratNum(v.uno) !== 0) partes.push({ t: ratTexto(rat(Math.abs(v.uno.n), v.uno.d)), s: v.uno.n < 0 ? '−' : '+' });
+          if (ratNum(v.pi) !== 0) {
+            var a = rat(Math.abs(v.pi.n), v.pi.d);
+            partes.push({ t: (a.n === 1 && a.d === 1 ? '' : ratTexto(a) + (a.d === 1 ? '' : ' ')) + 'π', s: v.pi.n < 0 ? '−' : '+' });
+          }
+          if (partes.length === 0) return '0';
+          var s = (partes[0].s === '−' ? '−' : '') + partes[0].t;
+          for (var i = 1; i < partes.length; i++) { s += ' ' + partes[i].s + ' ' + partes[i].t; }
+          return s;
+        }
+
+        /* ============ estado ============ */
+        var COL = {
+          cil: { f: '#b2dfdb', s: '#004d40' },
+          cono: { f: '#ffe0b2', s: '#e65100' },
+          semi: { f: '#c5cae9', s: '#283593' },
+          semi2: { f: '#d1c4e9', s: '#4527a0' },
+          pris: { f: '#c8e6c9', s: '#2e7d32' },
+          pir: { f: '#ffe0b2', s: '#e65100' },
+          hueco: { f: '#ffcdd2', s: '#b71c1c' }
+        };
+
+        var figuras = {
+          silo: {
+            nombre: 'Silo (cilindro + cono)',
+            desc: 'Un silo agrícola: un cilindro con un cono encima. El volumen total es la suma de los dos volúmenes parciales.',
+            nota: '<strong>La misma base:</strong> el cono descansa sobre el cilindro, así que ambos comparten el radio. Un solo control mueve el radio de las dos partes.',
+            piezas: ['cilindro', 'cono'],
+            ctrl: [
+              { id: 'r', txt: 'Radio del silo (r)', min: 0.5, max: 6, val: 3 },
+              { id: 'h', txt: 'Altura del cilindro (h)', min: 0.5, max: 14, val: 8 },
+              { id: 'hc', txt: 'Altura del cono (h del cono)', min: 0.5, max: 8, val: 2 }
+            ]
+          },
+          tanque: {
+            nombre: 'Tanque (cilindro + semiesfera)',
+            desc: 'Un tanque cilíndrico rematado por una media esfera. El volumen total es la suma de los dos volúmenes parciales.',
+            nota: '<strong>Media esfera, medio volumen:</strong> la semiesfera vale la mitad de 4/3 πr³, es decir, 2/3 πr³. Un error frecuente es sumar la esfera completa.',
+            piezas: ['cilindro', 'semiesfera'],
+            ctrl: [
+              { id: 'r', txt: 'Radio (r)', min: 0.5, max: 6, val: 3 },
+              { id: 'h', txt: 'Altura del cilindro (h)', min: 0.5, max: 14, val: 10 }
+            ]
+          },
+          capsula: {
+            nombre: 'Cápsula (cilindro + dos semiesferas)',
+            desc: 'Una cápsula de medicina: un cilindro con una media esfera en cada extremo. Las dos semiesferas juntas equivalen a una esfera completa.',
+            nota: '<strong>Dos mitades hacen un entero:</strong> como las dos semiesferas tienen el mismo radio, se pueden sumar como una esfera completa: 4/3 πr³. Es un atajo válido y rápido.',
+            piezas: ['cilindro', 'semiesfera'],
+            ctrl: [
+              { id: 'r', txt: 'Radio (r)', min: 0.5, max: 6, val: 2 },
+              { id: 'h', txt: 'Altura del cilindro (h)', min: 0.5, max: 14, val: 8 }
+            ]
+          },
+          torre: {
+            nombre: 'Torre (prisma + pirámide)',
+            desc: 'Una torre con cuerpo de prisma rectangular y techo de pirámide. El volumen total es la suma de los dos volúmenes parciales.',
+            nota: '<strong>Sin π:</strong> ni el prisma ni la pirámide tienen caras curvas, así que el resultado es un número exacto, sin π.',
+            piezas: ['prisma', 'piramide'],
+            ctrl: [
+              { id: 'a', txt: 'Lado de la base (a)', min: 0.5, max: 10, val: 6 },
+              { id: 'c', txt: 'Altura del prisma (c)', min: 0.5, max: 14, val: 8 },
+              { id: 'hp', txt: 'Altura de la pirámide (h)', min: 0.5, max: 8, val: 4 }
+            ]
+          },
+          perforado: {
+            nombre: 'Bloque perforado (prisma − cilindro)',
+            desc: 'Un bloque rectangular atravesado de lado a lado por un agujero cilíndrico. Aquí el volumen del cilindro se resta, porque es material que falta.',
+            nota: '<strong>Aquí se resta:</strong> el agujero no añade material, lo quita. El resultado se deja indicado como una diferencia (por ejemplo, 500 − 20π) porque no se pueden combinar un número entero y un múltiplo de π.',
+            piezas: ['prisma', 'cilindro'],
+            ctrl: [
+              { id: 'a', txt: 'Largo del bloque (a)', min: 1, max: 14, val: 10 },
+              { id: 'b', txt: 'Ancho del bloque (b)', min: 1, max: 14, val: 10 },
+              { id: 'c', txt: 'Alto del bloque (c)', min: 0.5, max: 10, val: 5 },
+              { id: 'r', txt: 'Radio del agujero (r)', min: 0.5, max: 4, val: 2 }
+            ]
+          }
+        };
+
+        var figAct = 'silo';
+        var unidad = 'm';
+        var dim = {};
+        var sep = 0, animId = null, separado = false;
+
+        var dibujo = document.getElementById('dibujo');
+        var controles = document.getElementById('controles');
+        var cuerpoPartes = document.getElementById('cuerpo-partes');
+        var fbReto = document.getElementById('fb-reto');
+
+        /* ============ controles dinámicos ============ */
+        function construirControles() {
+          var f = figuras[figAct];
+          dim = {};
+          var html = '';
+          f.ctrl.forEach(function (c) {
+            dim[c.id] = c.val;
+            html += '<div class="control">' +
+              '<span class="nombre" id="lbl-' + c.id + '">' + c.txt + '</span>' +
+              '<div class="fila">' +
+              '<input type="range" id="rg-' + c.id + '" min="' + c.min + '" max="' + c.max + '" step="0.5" value="' + c.val + '" aria-labelledby="lbl-' + c.id + '" />' +
+              '<input type="number" id="nu-' + c.id + '" min="' + c.min + '" max="' + c.max + '" step="0.5" value="' + c.val + '" aria-labelledby="lbl-' + c.id + '" />' +
+              '<span class="unidad-inline uni">' + unidad + '</span>' +
+              '</div></div>';
+          });
+          controles.innerHTML = html;
+          f.ctrl.forEach(function (c) {
+            var rg = document.getElementById('rg-' + c.id);
+            var nu = document.getElementById('nu-' + c.id);
+            rg.addEventListener('input', function () { fijar(c, parseFloat(rg.value)); });
+            nu.addEventListener('change', function () { var v = parseFloat(nu.value); fijar(c, isNaN(v) ? dim[c.id] : v); });
+            document.getElementById('lbl-' + c.id).addEventListener('click', function () { rg.focus(); });
+          });
+        }
+        function fijar(c, v) {
+          v = Math.round(v * 2) / 2;
+          if (v < c.min) v = c.min;
+          if (v > c.max) v = c.max;
+          dim[c.id] = v;
+          document.getElementById('rg-' + c.id).value = v;
+          document.getElementById('nu-' + c.id).value = v;
+          actualizar();
+        }
+
+        /* ============ partes de la figura ============ */
+        function partes() {
+          var d = dim, L = [];
+          if (figAct === 'silo') {
+            L.push({ nom: 'Cilindro', col: COL.cil, form: 'V = πr²h', sust: 'π · (' + d.r + ')² · ' + d.h, v: vCilindro(d.r, d.h), signo: '+' });
+            L.push({ nom: 'Cono superior', col: COL.cono, form: 'V = 1/3 πr²h', sust: '1/3 · π · (' + d.r + ')² · ' + d.hc, v: vCono(d.r, d.hc), signo: '+' });
+          } else if (figAct === 'tanque') {
+            L.push({ nom: 'Cilindro', col: COL.cil, form: 'V = πr²h', sust: 'π · (' + d.r + ')² · ' + d.h, v: vCilindro(d.r, d.h), signo: '+' });
+            L.push({ nom: 'Semiesfera superior', col: COL.semi, form: 'V = 1/2 · 4/3 πr³', sust: '1/2 · 4/3 · π · (' + d.r + ')³', v: vSemiesfera(d.r), signo: '+' });
+          } else if (figAct === 'capsula') {
+            L.push({ nom: 'Cilindro central', col: COL.cil, form: 'V = πr²h', sust: 'π · (' + d.r + ')² · ' + d.h, v: vCilindro(d.r, d.h), signo: '+' });
+            L.push({ nom: 'Semiesfera superior', col: COL.semi, form: 'V = 1/2 · 4/3 πr³', sust: '1/2 · 4/3 · π · (' + d.r + ')³', v: vSemiesfera(d.r), signo: '+' });
+            L.push({ nom: 'Semiesfera inferior', col: COL.semi2, form: 'V = 1/2 · 4/3 πr³', sust: '1/2 · 4/3 · π · (' + d.r + ')³', v: vSemiesfera(d.r), signo: '+' });
+          } else if (figAct === 'torre') {
+            L.push({ nom: 'Prisma (cuerpo)', col: COL.pris, form: 'V = a · b · c', sust: d.a + ' · ' + d.a + ' · ' + d.c, v: vPrisma(d.a, d.a, d.c), signo: '+' });
+            L.push({ nom: 'Pirámide (techo)', col: COL.pir, form: 'V = 1/3 · (área base) · h', sust: '1/3 · (' + d.a + ' · ' + d.a + ') · ' + d.hp, v: vPiramide(d.a, d.a, d.hp), signo: '+' });
+          } else {
+            L.push({ nom: 'Bloque (prisma)', col: COL.pris, form: 'V = a · b · c', sust: d.a + ' · ' + d.b + ' · ' + d.c, v: vPrisma(d.a, d.b, d.c), signo: '+' });
+            L.push({ nom: 'Agujero (cilindro)', col: COL.hueco, form: 'V = πr²h', sust: 'π · (' + d.r + ')² · ' + d.c, v: neg(vCilindro(d.r, d.c)), signo: '−' });
+          }
+          return L;
+        }
+
+        /* ============ dibujo ============ */
+        function elipse(cx, cy, rx, ry, col, extra) {
+          return '<ellipse cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) + '" rx="' + rx.toFixed(1) + '" ry="' + ry.toFixed(1) + '" fill="' + col.f + '" stroke="' + col.s + '" stroke-width="2.5"' + (extra || '') + '/>';
+        }
+        function cilindroSVG(cx, yTop, yBot, rp, ry, col) {
+          var s = '<path d="M' + (cx - rp) + ',' + yTop + ' L' + (cx - rp) + ',' + yBot +
+            ' A' + rp + ',' + ry + ' 0 0 0 ' + (cx + rp) + ',' + yBot + ' L' + (cx + rp) + ',' + yTop + ' Z" fill="' + col.f + '" stroke="' + col.s + '" stroke-width="2.5"/>';
+          s += elipse(cx, yTop, rp, ry, col);
+          return s;
+        }
+        function conoSVG(cx, yBase, rp, ry, hp, col) {
+          var s = elipse(cx, yBase, rp, ry, col);
+          s += '<path d="M' + (cx - rp) + ',' + yBase + ' L' + cx + ',' + (yBase - hp) + ' L' + (cx + rp) + ',' + yBase + ' Z" fill="' + col.f + '" stroke="' + col.s + '" stroke-width="2.5"/>';
+          return s;
+        }
+        function semiArriba(cx, y, rp, col) {
+          var s = '<path d="M' + (cx - rp) + ',' + y + ' A' + rp + ',' + rp + ' 0 0 1 ' + (cx + rp) + ',' + y + ' Z" fill="' + col.f + '" stroke="' + col.s + '" stroke-width="2.5"/>';
+          s += '<ellipse cx="' + cx + '" cy="' + y + '" rx="' + rp + '" ry="' + (rp * 0.28).toFixed(1) + '" fill="none" stroke="' + col.s + '" stroke-width="1.5" stroke-dasharray="4 3"/>';
+          return s;
+        }
+        function semiAbajo(cx, y, rp, col) {
+          var s = '<path d="M' + (cx - rp) + ',' + y + ' A' + rp + ',' + rp + ' 0 0 0 ' + (cx + rp) + ',' + y + ' Z" fill="' + col.f + '" stroke="' + col.s + '" stroke-width="2.5"/>';
+          s += '<ellipse cx="' + cx + '" cy="' + y + '" rx="' + rp + '" ry="' + (rp * 0.28).toFixed(1) + '" fill="none" stroke="' + col.s + '" stroke-width="1.5" stroke-dasharray="4 3"/>';
+          return s;
+        }
+        function cajaSVG(cx, yBase, aw, dp, hp, col) {
+          var dv = dp * 0.5;
+          var fl = [cx - aw / 2, yBase], fr = [cx + aw / 2, yBase];
+          var s = '';
+          s += '<polygon points="' + (fl[0]) + ',' + (fl[1] - hp) + ' ' + (fr[0]) + ',' + (fr[1] - hp) + ' ' + (fr[0] + dp) + ',' + (fr[1] - hp - dv) + ' ' + (fl[0] + dp) + ',' + (fl[1] - hp - dv) + '" fill="' + col.f + '" fill-opacity="0.7" stroke="' + col.s + '" stroke-width="2.5"/>';
+          s += '<polygon points="' + fr[0] + ',' + fr[1] + ' ' + (fr[0] + dp) + ',' + (fr[1] - dv) + ' ' + (fr[0] + dp) + ',' + (fr[1] - hp - dv) + ' ' + fr[0] + ',' + (fr[1] - hp) + '" fill="' + col.f + '" fill-opacity="0.5" stroke="' + col.s + '" stroke-width="2.5"/>';
+          s += '<rect x="' + fl[0] + '" y="' + (yBase - hp) + '" width="' + aw + '" height="' + hp + '" fill="' + col.f + '" stroke="' + col.s + '" stroke-width="2.5"/>';
+          return s;
+        }
+        function piramideSVG(cx, yBase, aw, dp, hp, col) {
+          var dv = dp * 0.5;
+          var fl = [cx - aw / 2, yBase], fr = [cx + aw / 2, yBase];
+          var br = [fr[0] + dp, fr[1] - dv], bl = [fl[0] + dp, fl[1] - dv];
+          var ap = [(fl[0] + br[0]) / 2, (fl[1] + br[1]) / 2 - hp];
+          function p(q) { return q[0].toFixed(1) + ',' + q[1].toFixed(1); }
+          var s = '<polygon points="' + p(fr) + ' ' + p(br) + ' ' + p(ap) + '" fill="' + col.f + '" fill-opacity="0.6" stroke="' + col.s + '" stroke-width="2.5"/>';
+          s += '<polygon points="' + p(fl) + ' ' + p(fr) + ' ' + p(ap) + '" fill="' + col.f + '" stroke="' + col.s + '" stroke-width="2.5"/>';
+          return s;
+        }
+
+        function dibujar() {
+          var W = 360, H = 330;
+          var d = dim, cx = 165, suelo = 285;
+          var s = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + figuras[figAct].nombre + ' dibujado a escala' + (separado ? ', con las partes separadas' : '') + '.">';
+          s += '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#ffffff"/>';
+          var g = sep * 46; /* desplazamiento de separación */
+          var px, rp, ry, hp, hcp;
+
+          if (figAct === 'silo') {
+            px = Math.min(13, 190 / (d.h + d.hc), 70 / d.r);
+            rp = d.r * px; ry = Math.max(5, rp * 0.28); hp = d.h * px; hcp = d.hc * px;
+            var yTopCil = suelo - hp;
+            s += cilindroSVG(cx, yTopCil, suelo, rp, ry, COL.cil);
+            s += conoSVG(cx, yTopCil - g, rp, ry, hcp, COL.cono);
+            s += '<text x="' + (cx + rp + 10) + '" y="' + (yTopCil + hp / 2) + '" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#004d40">h = ' + d.h + '</text>';
+            s += '<text x="' + (cx + rp + 10) + '" y="' + (yTopCil - g - hcp / 2) + '" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#e65100">h = ' + d.hc + '</text>';
+            s += '<text x="' + cx + '" y="' + (suelo + 24) + '" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#00332b">r = ' + d.r + '</text>';
+          } else if (figAct === 'tanque') {
+            px = Math.min(13, 180 / (d.h + d.r), 70 / d.r);
+            rp = d.r * px; ry = Math.max(5, rp * 0.28); hp = d.h * px;
+            var yT = suelo - hp;
+            s += cilindroSVG(cx, yT, suelo, rp, ry, COL.cil);
+            s += semiArriba(cx, yT - g, rp, COL.semi);
+            s += '<text x="' + (cx + rp + 10) + '" y="' + (yT + hp / 2) + '" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#004d40">h = ' + d.h + '</text>';
+            s += '<text x="' + cx + '" y="' + (suelo + 24) + '" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#00332b">r = ' + d.r + '</text>';
+          } else if (figAct === 'capsula') {
+            px = Math.min(13, 175 / (d.h + 2 * d.r), 70 / d.r);
+            rp = d.r * px; ry = Math.max(5, rp * 0.28); hp = d.h * px;
+            var yB = suelo - rp, yA = yB - hp;
+            s += cilindroSVG(cx, yA, yB, rp, ry, COL.cil);
+            s += semiArriba(cx, yA - g, rp, COL.semi);
+            s += semiAbajo(cx, yB + g, rp, COL.semi2);
+            s += '<text x="' + (cx + rp + 10) + '" y="' + (yA + hp / 2) + '" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#004d40">h = ' + d.h + '</text>';
+            s += '<text x="' + cx + '" y="' + (suelo + 34) + '" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#00332b">r = ' + d.r + '</text>';
+          } else if (figAct === 'torre') {
+            px = Math.min(13, 175 / (d.c + d.hp), 55 / d.a);
+            var aw = d.a * px, dp = d.a * px * 0.5, cp = d.c * px, php = d.hp * px;
+            s += cajaSVG(cx, suelo, aw, dp, cp, COL.pris);
+            s += piramideSVG(cx, suelo - cp - g, aw, dp, php, COL.pir);
+            s += '<text x="' + (cx + aw / 2 + dp + 8) + '" y="' + (suelo - cp / 2) + '" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#2e7d32">c = ' + d.c + '</text>';
+            s += '<text x="' + (cx + aw / 2 + dp + 8) + '" y="' + (suelo - cp - g - php / 2) + '" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#e65100">h = ' + d.hp + '</text>';
+            s += '<text x="' + cx + '" y="' + (suelo + 24) + '" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#00332b">a = ' + d.a + '</text>';
+          } else {
+            px = Math.min(12, 150 / d.c, 190 / (d.a + d.b * 0.5));
+            var awp = d.a * px, dpp = d.b * px * 0.5, cpp = d.c * px;
+            var cx2 = 130;
+            s += cajaSVG(cx2, suelo, awp, dpp, cpp, COL.pris);
+            var rpp = d.r * px, ryy = Math.max(4, rpp * 0.4);
+            var hx = cx2 + dpp / 2, hyTop = suelo - cpp - dpp * 0.25;
+            if (sep < 0.02) {
+              s += '<ellipse cx="' + hx.toFixed(1) + '" cy="' + hyTop.toFixed(1) + '" rx="' + rpp.toFixed(1) + '" ry="' + ryy.toFixed(1) + '" fill="' + COL.hueco.f + '" stroke="' + COL.hueco.s + '" stroke-width="2.5"/>';
+              s += '<line x1="' + (hx - rpp) + '" y1="' + hyTop + '" x2="' + (hx - rpp) + '" y2="' + (hyTop + cpp) + '" stroke="' + COL.hueco.s + '" stroke-width="2" stroke-dasharray="5 3"/>';
+              s += '<line x1="' + (hx + rpp) + '" y1="' + hyTop + '" x2="' + (hx + rpp) + '" y2="' + (hyTop + cpp) + '" stroke="' + COL.hueco.s + '" stroke-width="2" stroke-dasharray="5 3"/>';
+            } else {
+              s += '<ellipse cx="' + hx.toFixed(1) + '" cy="' + hyTop.toFixed(1) + '" rx="' + rpp.toFixed(1) + '" ry="' + ryy.toFixed(1) + '" fill="#ffffff" stroke="' + COL.hueco.s + '" stroke-width="2" stroke-dasharray="5 3"/>';
+              var ex = 300, ey = suelo - cpp / 2;
+              s += cilindroSVG(ex, ey - cpp / 2, ey + cpp / 2, rpp, ryy, COL.hueco);
+              s += '<text x="' + (ex - rpp - 26) + '" y="' + ey + '" font-family="Segoe UI, sans-serif" font-size="26" font-weight="700" fill="#b71c1c">−</text>';
+            }
+            s += '<text x="' + cx2 + '" y="' + (suelo + 24) + '" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#2e7d32">a = ' + d.a + ' · b = ' + d.b + ' · c = ' + d.c + '</text>';
+            s += '<text x="' + hx + '" y="' + (hyTop - rpp - 8) + '" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" fill="#b71c1c">r = ' + d.r + '</text>';
+          }
+          s += '</svg>';
+          dibujo.innerHTML = s;
+        }
+
+        /* ============ animación de separación ============ */
+        function animarSep(destino) {
+          if (animId) cancelAnimationFrame(animId);
+          var ini = sep, t0 = null;
+          function paso(t) {
+            if (!t0) t0 = t;
+            var k = Math.min(1, (t - t0) / 420);
+            sep = ini + (destino - ini) * (k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2);
+            dibujar();
+            if (k < 1) { animId = requestAnimationFrame(paso); } else { sep = destino; dibujar(); animId = null; }
+          }
+          animId = requestAnimationFrame(paso);
+        }
+
+        /* ============ actualización ============ */
+        function actualizar() {
+          var P = partes();
+          var total = P.reduce(function (acc, p) { return sumaV(acc, p.v); }, { pi: cero(), uno: cero() });
+          var html = '';
+          P.forEach(function (p) {
+            var vv = p.signo === '−' ? neg(p.v) : p.v;
+            html += '<tr><td><span class="chip" style="background:' + p.col.f + '; border-color:' + p.col.s + '"></span>' + p.nom + '</td>' +
+              '<td>' + p.form + '</td><td>' + p.sust + '</td>' +
+              '<td>' + (p.signo === '−' ? '− ' : '+ ') + textoV(vv) + ' ' + unidad + '³</td></tr>';
+          });
+          html += '<tr class="total"><td colspan="3">Volumen total de la figura</td><td>' + textoV(total) + ' ' + unidad + '³</td></tr>';
+          cuerpoPartes.innerHTML = html;
+
+          var dec = decimalV(total);
+          document.getElementById('p-valor').textContent = 'V = ' + textoV(total) + ' ' + unidad + '³';
+          document.getElementById('p-aprox').textContent = '≈ ' + fmt(dec) + ' ' + unidad + '³';
+          var extra = '';
+          if (unidad === 'cm') extra = 'Equivale a ' + fmt(dec / 1000) + ' litros.';
+          else if (unidad === 'm') extra = 'Equivale a ' + fmt(dec * 1000) + ' litros.';
+          document.getElementById('p-extra').textContent = extra;
+
+          document.getElementById('descripcion-figura').textContent = figuras[figAct].desc;
+          document.getElementById('nota-figura').innerHTML = figuras[figAct].nota;
+          document.querySelectorAll('.uni').forEach(function (e) { e.textContent = unidad; });
+          dibujar();
+        }
+
+        /* ============ eventos ============ */
+        document.querySelectorAll('.f-btn').forEach(function (b) {
+          b.addEventListener('click', function () {
+            document.querySelectorAll('.f-btn').forEach(function (o) { o.setAttribute('aria-pressed', 'false'); });
+            b.setAttribute('aria-pressed', 'true');
+            figAct = b.getAttribute('data-f');
+            construirControles();
+            limpiarReto();
+            actualizar();
+          });
+        });
+        document.querySelectorAll('.u-btn').forEach(function (b) {
+          b.addEventListener('click', function () {
+            document.querySelectorAll('.u-btn').forEach(function (o) { o.setAttribute('aria-pressed', 'false'); });
+            b.setAttribute('aria-pressed', 'true');
+            unidad = b.getAttribute('data-u');
+            actualizar();
+          });
+        });
+        document.getElementById('btn-separar').addEventListener('click', function () {
+          separado = !separado;
+          this.setAttribute('aria-pressed', separado ? 'true' : 'false');
+          this.textContent = separado ? 'Volver a unir las partes' : 'Separar las partes';
+          animarSep(separado ? 1 : 0);
+        });
+
+        function limpiarReto() {
+          document.querySelectorAll('.op-pieza').forEach(function (o) { o.setAttribute('aria-pressed', 'false'); });
+          fbReto.textContent = ''; fbReto.className = 'fb';
+        }
+        document.querySelectorAll('.op-pieza').forEach(function (b) {
+          b.addEventListener('click', function () {
+            b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+          });
+        });
+        document.getElementById('btn-limpiar').addEventListener('click', limpiarReto);
+        document.getElementById('btn-comprobar').addEventListener('click', function () {
+          var esperado = figuras[figAct].piezas.slice().sort().join(',');
+          var elegido = [];
+          document.querySelectorAll('.op-pieza').forEach(function (o) {
+            if (o.getAttribute('aria-pressed') === 'true') elegido.push(o.getAttribute('data-p'));
+          });
+          if (elegido.length === 0) {
+            fbReto.textContent = 'Marca al menos un sólido antes de comprobar.';
+            fbReto.className = 'fb no';
+            return;
+          }
+          if (elegido.slice().sort().join(',') === esperado) {
+            fbReto.textContent = 'Correcto: ' + figuras[figAct].nombre + '. Ahora comprueba en la tabla cómo se combinan sus volúmenes.';
+            fbReto.className = 'fb ok';
+          } else {
+            fbReto.textContent = 'Todavía no. Usa el botón «Separar las partes» y observa qué sólidos quedan a la vista.';
+            fbReto.className = 'fb no';
+          }
+        });
+
+        construirControles();
+        actualizar();
+      })();
+    </script>
+  </body>
+</html>
